@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>JavaScript — ES6+ Interactive Exam (30 MCQs · 20 Output · 5 Code)</title>
+<style>
+  :root{
+    --bg:#0b1320; --card:#121a2a; --muted:#93a1b08c; --text:#e6edf3; --accent:#73c7ff; --good:#00d48a; --bad:#ff6666;
+  }
+  html,body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Inter,Arial,sans-serif;background:var(--bg);color:var(--text)}
+  .wrap{max-width:1020px;margin:32px auto;padding:0 16px}
+  h1{font-size:28px;margin:0 0 14px}
+  .sub{opacity:.8;margin-bottom:18px}
+  .pillbar{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0 18px}
+  .pill{background:#0e213a;border:1px solid #1f3b63;color:var(--text);padding:8px 10px;border-radius:999px;font-size:14px}
+  .pill strong{color:var(--accent)}
+  .btn{cursor:pointer;border:1px solid #2c4f80;background:#113058;color:#fff;padding:9px 14px;border-radius:10px;font-weight:600}
+  .btn:hover{filter:brightness(1.08)}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .btn-good{background:#0f3d2f;border-color:#1c745a}
+  .btn-bad{background:#442121;border-color:#8f4040}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  details.group{background:var(--card);border:1px solid #1e2a40;border-radius:14px;padding:8px 12px;margin:12px 0}
+  details.group>summary{list-style:none;cursor:pointer;font-weight:700;font-size:18px;padding:6px 0;outline:none}
+  .qcard{border:1px solid #1b2740;background:#0f1726;border-radius:12px;padding:12px;margin:10px 0}
+  .qid{font:600 13px/1.2 ui-monospace,SFMono-Regular,Consolas,monospace;color:#9fb3ce}
+  .q{margin:6px 0 10px}
+  .choices{display:grid;gap:8px}
+  .choices label{display:flex;gap:8px;align-items:flex-start;background:#0c1220;border:1px solid #1b2b47;padding:8px 10px;border-radius:10px;cursor:pointer}
+  .ansbox{display:none;margin-top:10px;border-top:1px dashed #274160;padding-top:10px}
+  .reveal{margin-top:8px}
+  pre.code{background:#0a0f1c;border:1px solid #1b2a46;border-radius:10px;padding:10px;overflow:auto;color:#d6e2ff}
+  input[type="text"],textarea{width:100%;background:#0a1426;border:1px solid #1d3152;color:#e9f2ff;border-radius:10px;padding:9px;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+  textarea{min-height:120px;resize:vertical}
+  .grid-2{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}
+  .score{font-weight:800}
+  .good{color:var(--good)} .bad{color:var(--bad)}
+  .mini{font-size:12px;color:var(--muted)}
+  .foot{opacity:.75;margin:26px 0 8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>JavaScript — Day 2 Interactive Exam <span class="mini">(30 MCQs · 20 Output · 5 Code)</span></h1>
+  <div class="pillbar">
+    <span class="pill">MCQs: <strong id="mcqScore">0/30</strong></span>
+    <span class="pill">Output: <strong id="outScore">0/20</strong></span>
+    <span class="pill">Code: <strong id="codeScore">0/5</strong></span>
+    <span class="pill">Overall: <strong id="overallScore">0/55</strong></span>
+    <button id="submitAll" class="btn">Submit All</button>
+    <button id="resetAll" class="btn btn-bad">Reset</button>
+  </div>
+
+  <details class="group" open>
+    <summary>1) Multiple-Choice Questions (30)</summary>
+    <div id="mcqHost"></div>
+  </details>
+
+  <details class="group" open>
+    <summary>2) What’s the Output? (20)</summary>
+    <p class="mini">Type the exact output as it would appear in the console. Whitespace is normalized; each line matters.</p>
+    <div id="outHost"></div>
+  </details>
+
+  <details class="group" open>
+    <summary>3) Code Writing (5)</summary>
+    <p class="mini">Write the function exactly as specified. On submit, your code runs against small tests. You can reveal a sample solution if you’re stuck.</p>
+    <div id="codeHost"></div>
+  </details>
+
+  <p class="foot mini">
+    Focus: promises (then/catch/finally, chaining), async/await, ES modules (named &amp; default exports, namespace imports, re-exports), classes (private fields, static, getters/setters, extends/super/new.target), destructuring, defaults, rest/spread, template literals. Sources: ES6 slides &amp; Lab modules. <!-- citations required by tool: -->
+    <!-- :contentReference[oaicite:2]{index=2}  -->
+    <!-- :contentReference[oaicite:3]{index=3}  -->
+  </p>
+</div>
+
+<script>
+/* -------------------------------------------
+   Data
+------------------------------------------- */
+
+const MCQS = [
+  // 1
+  {q:'Which statement about let is true compared to var?',
+   c:['Not hoisted at all','Hoisted but uninitialized (TDZ)','Hoisted and initialized to undefined like var','Block-scope only in strict mode'],
+   a:1, e:'let is hoisted but not initialized until its declaration (temporal dead zone).'},
+  // 2
+  {q:'const x = {}; Which is allowed?',
+   c:['x = 1','x.name = "JS"','delete x','x++'],
+   a:1, e:'const protects the binding; object contents can still be mutated.'},
+  // 3
+  {q:'Arrow functions bind this…',
+   c:['Dynamically at call time','Lexically from surrounding scope','To the window always','To the new instance'],
+   a:1, e:'Arrows capture this lexically.'},
+  // 4
+  {q:'Which is true for arrow functions?',
+   c:['Have arguments object','Can be constructors','Have no prototype','Require parentheses for one param'],
+   a:2, e:'Arrows have no prototype and cannot be used with new; they also lack arguments.'},
+  // 5
+  {q:'Template literals support…',
+   c:['Only single line strings','String interpolation and multi-line','Numbers only','Implicit concatenation only'],
+   a:1, e:'Backticks support ${expr} and multi-line.'},
+  // 6
+  {q:'Default parameter rules:',
+   c:['Later params can be used in earlier defaults','Earlier params can be used in later defaults','Defaults run at parse time','Defaults ignore scope'],
+   a:1, e:'function f(a=1,b=a){…} works; b=a uses earlier param.'},
+  // 7
+  {q:'Enhanced object literal feature:',
+   c:['function: keyword required for methods','Computed property names','No shorthand allowed','Private fields with #'],
+   a:1, e:'{ [expr]: 1, method(){} , x } are enhancements.'},
+  // 8
+  {q:'Array rest element (…) must be…',
+   c:['First','Last','Any position','Even index only'],
+   a:1, e:'Rest must be the final element: [a,...rest].'},
+  // 9
+  {q:'Spread syntax does…',
+   c:['Creates deep copy of objects','Expands iterable into elements','Only works on arrays in ES6','Same as rest'],
+   a:1, e:'Spread expands …iterable; rest collects.'},
+  // 10
+  {q:'Promise initial states:',
+   c:['initialized, complete, failed','pending, fulfilled, rejected','start, done, catch','open, close'],
+   a:1, e:'A promise is pending → fulfilled or rejected.'},
+  // 11
+  {q:'then(…) returns…',
+   c:['The same promise','A brand new promise','Undefined','Only the value'],
+   a:1, e:'then always returns a new promise (for chaining).'},
+  // 12
+  {q:'Promise.all([p1,p2]) resolves when…',
+   c:['Any resolves','All resolve','First rejects','After a timeout'],
+   a:1, e:'All must fulfill; otherwise it rejects fast.'},
+  // 13
+  {q:'finally(…) runs…',
+   c:['Only on fulfill','Only on reject','On settle (either way)','Before then'],
+   a:2, e:'finally runs after fulfillment or rejection and passes through the original result.'},
+  // 14
+  {q:'An async function returns…',
+   c:['The raw value','A Promise','Undefined','A Generator'],
+   a:1, e:'async always returns a Promise.'},
+  // 15
+  {q:'await can be used…',
+   c:['Anywhere','Only inside async functions','Inside constructors only','In top-level scripts since ES6'],
+   a:1, e:'await requires an async function (top-level await is newer).'},
+  // 16
+  {q:'Which is true about classes?',
+   c:['Class declarations are hoisted like functions','Must be called without new','Not hoisted (TDZ applies)','May be redeclared'],
+   a:2, e:'Class declarations are hoisted but uninitialized (TDZ).'},
+  // 17
+  {q:'Static methods…',
+   c:['Are available on instances','Are available on the class','Are private by default','Can only be getters'],
+   a:1, e:'Use ClassName.method(); not instance.method().'},
+  // 18
+  {q:'Private fields with #:',
+   c:['Accessible via this["#x"]','Truly private to class body','Are syntax sugar for _x','Work only in strict mode'],
+   a:1, e:'#x is enforced at syntax level; access outside throws.'},
+  // 19
+  {q:'In a derived class constructor you must call…',
+   c:['super() before using this','this() before super()','No need for super','super() only if no fields'],
+   a:0, e:'super() must come first to initialize this.'},
+  // 20
+  {q:'new.target inside a constructor is…',
+   c:['Always undefined','The function being constructed','The base class always','The module object'],
+   a:1, e:'new.target refers to the constructor actually invoked.'},
+  // 21
+  {q:'Default export import syntax:',
+   c:['import {default as x} from "./m.js";','import x from "./m.js";','import * as default from "./m.js";','import {x} default from "./m.js";'],
+   a:1, e:'Default import has no braces: import x from …'},
+  // 22
+  {q:'Namespace import example:',
+   c:['import * from "./m.js"','import all as m from "./m.js"','import * as m from "./m.js"','import m as * from "./m.js"'],
+   a:2, e:'import * as name from "…".'},
+  // 23
+  {q:'In browsers, module specifiers must be…',
+   c:['Any string','A URL or path with ./, ../, or /','A package name only','File name without extension'],
+   a:1, e:'Browser ESM requires explicit path/URL (usually with .js).'},
+  // 24
+  {q:'You cannot place import/export…',
+   c:['At top-level','Inside a function/if block','In modules','In separate files'],
+   a:1, e:'Spec requires top-level import/export.'},
+  // 25
+  {q:'Re-export with rename:',
+   c:['export sum as add from "./m.js";','export {sum: add} from "./m.js";','export {sum as add} from "./m.js";','export * as add from "./m.js";'],
+   a:2, e:'export { original as new } from "…".'},
+  // 26
+  {q:'Which log is true?',
+   c:['typeof class C {} === "object"','typeof class C {} === "function"','class is not a value','typeof class C {} === "class"'],
+   a:1, e:'Classes are special functions.'},
+  // 27
+  {q:'Destructuring with defaults:',
+   c:['let {a=1} = {}; a === 1','let {a=1} = {a:0}; a === 1','Defaults run after assignment','Defaults require var'],
+   a:0, e:'Default used only when property is undefined.'},
+  // 28
+  {q:'Array includes vs indexOf:',
+   c:['includes uses === and returns boolean','includes returns index','indexOf returns boolean','includes coerces like =='],
+   a:0, e:'includes → boolean, strict equality.'},
+  // 29
+  {q:'Promise chaining value flow:',
+   c:['Return value in then is ignored','Return value becomes next then input','Must always return a promise','catch breaks the chain'],
+   a:1, e:'Return synchronously to pass a value; return a promise to await.'},
+  // 30
+  {q:'finally( ) receives…',
+   c:['Resolution value as arg','Rejection reason as arg','No args (commonly)','Both value and reason'],
+   a:2, e:'finally has no parameters; use it for cleanup.'},
+];
+
+const OUTPUTS = [
+  {q:`console.log(typeof class Foo {});`, a:`function`},
+  {q:`class A { static x=3; }\nconst a=new A();\nconsole.log(typeof a.x, typeof A.x, A.x);`, a:`undefined number 3`},
+  {q:`let {x=1,y=x}={};\nconsole.log(x,y);`, a:`1 1`},
+  {q:`let [a,...r]=[10,20,30];\nconsole.log(a,r.length);`, a:`10 2`},
+  {q:`const o={n:1}; const p=o; p.n=9; console.log(o.n);`, a:`9`},
+  {q:`const f=(x=2,y=x*3)=>x+y;\nconsole.log(f(4), f());`, a:`8 8`},
+  {q:`Promise.resolve(5).then(v=>v*2).then(console.log);`, a:`10`},
+  {q:`async function g(){return 7}\ng().then(v=>console.log(typeof v,v));`, a:`number 7`},
+  {q:`class P{constructor(){console.log(new.target.name)}}\nclass C extends P{constructor(){super()}}\nnew C();`, a:`C`},
+  {q:`let x=30; console.log(x);\nlet z; console.log(z);\nz="ABC"; console.log(z);`, a:`30\nundefined\nABC`},
+  {q:`const s=\`a\\n\\nb\`; console.log(s.split('\\n').length);`, a:`3`},
+  {q:`const m={a:1, b:2};\nconst {b:beta=5,c=9}=m;\nconsole.log(beta,c);`, a:`2 9`},
+  {q:`const add=(...n)=>n.reduce((p,c)=>p+c,0);\nconsole.log(add(1,2,3));`, a:`6`},
+  {q:`const o={get x(){return 2}}; console.log(o.x);`, a:`2`},
+  {q:`let v=0; Promise.resolve().then(()=>v=1); console.log(v);`, a:`0`},
+  {q:`class K{ #x=1; getX(){return this.#x} }\nconsole.log(new K().getX());`, a:`1`},
+  {q:`try{class S{constructor(){this.x; super()}}}\ncatch(e){console.log('err');}`, a:`err`},
+  {q:`import('data:text/javascript,export default 5').then(m=>console.log(m.default));`, a:`5`},
+  {q:`const o={x:1, print(){setTimeout(()=>console.log(this.x),0)}}; o.print();`, a:`1`},
+  {q:`const n=[1,2,3]; console.log(Math.max(...n));`, a:`3`}
+];
+
+const CODE = [
+  {
+    title:'1) Sum with Rest',
+    prompt:`Write a function named <code>sumRest</code> that uses a rest parameter to return the sum of all numbers.\nExample: <code>sumRest(1,2,3) // 6</code>`,
+    solution:`function sumRest(...nums){ return nums.reduce((p,c)=>p + Number(c),0); }`,
+    test:(ctx)=>{
+      const fn = ctx.fn('sumRest'); if(!fn) return false;
+      return fn(1,2,3)===6 && fn()===0 && fn(5, -2, 7)===10;
+    }
+  },
+  {
+    title:'2) Private field class Emp',
+    prompt:`Create a class <code>Emp</code> with a private field <code>#id</code> and a public <code>Name</code>. The constructor receives <code>(id, Name)</code>. Add a method <code>toString()</code> → <code>"Emp: &lt;Name&gt;"</code>.`,
+    solution:`class Emp{ #id; constructor(id,Name){ this.#id=id; this.Name=Name; } toString(){ return "Emp: "+this.Name; } }`,
+    test:(ctx)=>{
+      const Emp = ctx.val('Emp'); if(typeof Emp!=='function') return false;
+      const e = new Emp(7,'Ali');
+      return e && e.Name==='Ali' && typeof e.toString==='function' && /Emp: Ali/.test(e.toString());
+    }
+  },
+  {
+    title:'3) Promise delay',
+    prompt:`Write <code>delay(ms, value="done")</code> that returns a Promise resolving with <code>value</code> after <code>ms</code> milliseconds.`,
+    solution:`function delay(ms, value="done"){ return new Promise(res=>setTimeout(res, ms, value)); }`,
+    test:async (ctx)=>{
+      const delay = ctx.fn('delay'); if(!delay) return false;
+      const v = await delay(10,'ok');
+      return v==='ok' && typeof delay(0).then==='function';
+    }
+  },
+  {
+    title:'4) squareArea via destructuring',
+    prompt:`Write <code>squareArea</code> that takes an object and uses destructuring to read <code>length</code> (default 1). Return <code>length*length</code>.`,
+    solution:`function squareArea({length=1}={}){ return length*length; }`,
+    test:(ctx)=>{
+      const f=ctx.fn('squareArea'); if(!f) return false;
+      return f({length:4})===16 && f({})===1 && f()===1;
+    }
+  },
+  {
+    title:'5) getColor with default param',
+    prompt:`Write <code>getColor</code> using default param destructuring: if <code>obj.color</code> missing, return <code>"black"</code>.`,
+    solution:`function getColor({color="black"}={}){ return color; }`,
+    test:(ctx)=>{
+      const f=ctx.fn('getColor'); if(!f) return false;
+      return f({color:'red'})==='red' && f({})==='black' && f()==='black';
+    }
+  }
+];
+
+/* -------------------------------------------
+   Renderers
+------------------------------------------- */
+
+const mcqHost = document.querySelector('#mcqHost');
+const outHost = document.querySelector('#outHost');
+const codeHost = document.querySelector('#codeHost');
+
+function makeId(prefix, idx){ return `${prefix}-${idx}`; }
+
+function renderMCQ(){
+  mcqHost.innerHTML = '';
+  MCQS.forEach((m,i)=>{
+    const id = makeId('mcq',i);
+    const el = document.createElement('div');
+    el.className = 'qcard';
+    el.innerHTML = `
+      <div class="qid">MCQ ${i+1} / 30</div>
+      <div class="q">${m.q}</div>
+      <div class="choices">
+        ${m.c.map((txt,ci)=>`
+          <label>
+            <input type="radio" name="${id}" value="${ci}" />
+            <span>${['A','B','C','D'][ci]}. ${txt}</span>
+          </label>`).join('')}
+      </div>
+      <div class="grid-2">
+        <button class="btn reveal">Reveal answer</button>
+        <div class="ansbox"><strong class="good">Answer:</strong> ${['A','B','C','D'][m.a]} — ${m.c[m.a]}<br/><span class="mini">${m.e||''}</span></div>
+      </div>`;
+    el.querySelector('.reveal').onclick = ()=> el.querySelector('.ansbox').style.display = 'block';
+    mcqHost.appendChild(el);
+  });
+}
+
+function renderOutput(){
+  outHost.innerHTML = '';
+  OUTPUTS.forEach((o,i)=>{
+    const id = makeId('out',i);
+    const el = document.createElement('div');
+    el.className = 'qcard';
+    el.innerHTML = `
+      <div class="qid">Output ${i+1} / 20</div>
+      <pre class="code">${escapeHtml(o.q)}</pre>
+      <input type="text" id="${id}" placeholder="Your console output (use \\n for new lines if needed)" />
+      <div class="grid-2">
+        <button class="btn reveal">Reveal answer</button>
+        <div class="ansbox"><strong class="good">Answer:</strong> <code>${escapeHtml(o.a)}</code></div>
+      </div>`;
+    el.querySelector('.reveal').onclick = ()=> el.querySelector('.ansbox').style.display = 'block';
+    outHost.appendChild(el);
+  });
+}
+
+function renderCode(){
+  codeHost.innerHTML = '';
+  CODE.forEach((c,i)=>{
+    const id = makeId('code',i);
+    const el = document.createElement('div');
+    el.className = 'qcard';
+    el.innerHTML = `
+      <div class="qid">Code ${i+1} / 5</div>
+      <div class="q">${c.title}</div>
+      <p class="mini">${c.prompt}</p>
+      <textarea id="${id}" spellcheck="false" placeholder="// your code here"></textarea>
+      <div class="grid-2">
+        <button class="btn reveal">Reveal sample</button>
+        <div class="ansbox"><strong>Sample:</strong><pre class="code">${escapeHtml(c.solution)}</pre></div>
+      </div>`;
+    el.querySelector('.reveal').onclick = ()=> el.querySelector('.ansbox').style.display = 'block';
+    codeHost.appendChild(el);
+  });
+}
+
+/* -------------------------------------------
+   Grading
+------------------------------------------- */
+
+const mcqScoreEl = document.querySelector('#mcqScore');
+const outScoreEl = document.querySelector('#outScore');
+const codeScoreEl = document.querySelector('#codeScore');
+const overallScoreEl = document.querySelector('#overallScore');
+
+function gradeMCQ(){
+  let score = 0;
+  MCQS.forEach((m,i)=>{
+    const checked = (mcqHost.querySelector(`input[name="mcq-${i}"]:checked`)||{}).value;
+    if(Number(checked) === m.a) score++;
+  });
+  mcqScoreEl.textContent = `${score}/${MCQS.length}`;
+  return score;
+}
+
+// Normalize answers safely (no fragile multi-line regex)
+function norm(s){
+  s = String(s ?? '');
+  s = s.split('\r').join('');          // remove CR
+  s = s.split('\t').join(' ');         // tabs to spaces
+  while(s.indexOf('  ') !== -1) s = s.replace('  ',' ');
+  s = s.replace(/\n{2,}/g, '\n');      // collapse multi newlines
+  return s.trim();
+}
+function gradeOutput(){
+  let score = 0;
+  OUTPUTS.forEach((o,i)=>{
+    const val = outHost.querySelector(`#out-${i}`).value;
+    if(norm(val) === norm(o.a)) score++;
+  });
+  outScoreEl.textContent = `${score}/${OUTPUTS.length}`;
+  return score;
+}
+
+function createEvalContext(code){
+  // Returns helpers for safe-ish evaluation
+  const fn = (name)=>{
+    try{
+      const F = new Function(`"use strict"; ${code}; return (typeof ${name}==="function")?${name}:null;`);
+      return F();
+    }catch(e){ return null; }
+  };
+  const val = (name)=>{
+    try{
+      const F = new Function(`"use strict"; ${code}; return (typeof ${name}!=="undefined")?${name}:null;`);
+      return F();
+    }catch(e){ return null; }
+  };
+  return {fn,val};
+}
+
+async function gradeCode(){
+  let passed = 0;
+  for(let i=0;i<CODE.length;i++){
+    const code = (document.querySelector(`#code-${i}`)||{}).value || '';
+    try{
+      const ctx = createEvalContext(code);
+      const t = CODE[i].test(ctx);
+      const ok = (t && typeof t.then==='function') ? await t : Boolean(t);
+      if(ok) passed++;
+    }catch(e){ /* ignore */ }
+  }
+  codeScoreEl.textContent = `${passed}/${CODE.length}`;
+  return passed;
+}
+
+async function submitAll(){
+  const s1 = gradeMCQ();
+  const s2 = gradeOutput();
+  const s3 = await gradeCode();
+  const total = s1 + s2 + s3;
+  overallScoreEl.textContent = `${total}/${MCQS.length + OUTPUTS.length + CODE.length}`;
+  // quick visual pulse
+  overallScoreEl.parentElement.style.boxShadow='0 0 0 2px #1f3b63';
+  setTimeout(()=>overallScoreEl.parentElement.style.boxShadow='none',500);
+}
+
+function resetAll(){
+  // radios
+  mcqHost.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+  // text inputs
+  outHost.querySelectorAll('input[type="text"]').forEach(t=>t.value='');
+  // code areas
+  codeHost.querySelectorAll('textarea').forEach(t=>t.value='');
+  // hide answers
+  document.querySelectorAll('.ansbox').forEach(b=>b.style.display='none');
+  // scores
+  mcqScoreEl.textContent='0/30';
+  outScoreEl.textContent='0/20';
+  codeScoreEl.textContent='0/5';
+  overallScoreEl.textContent='0/55';
+}
+
+/* -------------------------------------------
+   Utils & Boot
+------------------------------------------- */
+
+function escapeHtml(s){
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;');
+}
+
+document.querySelector('#submitAll').onclick = submitAll;
+document.querySelector('#resetAll').onclick = resetAll;
+
+renderMCQ();
+renderOutput();
+renderCode();
+</script>
+</body>
+</html>
