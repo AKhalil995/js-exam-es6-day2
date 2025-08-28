@@ -1,0 +1,1 @@
+# js-exam-es6-day2
